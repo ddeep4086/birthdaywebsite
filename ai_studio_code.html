@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday | A Special Journey</title>
+    
+    <!-- Preloading Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;800&family=Playfair+Display:ital,wght@1,400;1,600&display=swap" rel="stylesheet">
+
+    <style>
+        /* 
+         * DESIGN SYSTEM 
+         * Theme: Dark Mode, Glassmorphism, Neon Accents
+         */
+        :root {
+            --bg-color: #050505;
+            --accent-primary: #ff2a6d; /* Neon Pink */
+            --accent-secondary: #05d9e8; /* Cyan */
+            --accent-tertiary: #7700ff; /* Deep Purple */
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #ffffff;
+            --text-muted: #a0a0a0;
+            --font-main: 'Outfit', sans-serif;
+            --font-serif: 'Playfair Display', serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-main);
+            overflow-x: hidden;
+            width: 100vw;
+            min-height: 100vh;
+        }
+
+        /* Smooth Scroll Behavior */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* --- BACKGROUND CANVAS --- */
+        #cosmos {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at center, #1a0b2e 0%, #000000 100%);
+        }
+
+        /* --- UTILITIES & ANIMATIONS --- */
+        .hidden { opacity: 0; pointer-events: none; }
+        
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .fade-in-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, var(--accent-secondary), var(--accent-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* --- UI COMPONENTS --- */
+        
+        /* 1. ENTRY SCREEN */
+        #entry-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 1s ease;
+        }
+
+        .entry-btn {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            background: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--accent-secondary);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .entry-btn:hover {
+            background: var(--accent-secondary);
+            color: #000;
+            box-shadow: 0 0 20px var(--accent-secondary);
+        }
+
+        /* 2. HERO SECTION */
+        section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            position: relative;
+        }
+
+        h1.hero-title {
+            font-size: clamp(3rem, 10vw, 8rem);
+            font-weight: 800;
+            line-height: 0.9;
+            text-align: center;
+            mix-blend-mode: overlay;
+        }
+
+        .subtitle {
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-size: clamp(1.2rem, 3vw, 2rem);
+            margin-top: 1rem;
+            color: var(--accent-primary);
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 30px;
+            animation: bounce 2s infinite;
+        }
+
+        /* 3. MEMORY GALLERY (Glassmorphism) */
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            transform-style: preserve-3d;
+            transition: transform 0.1s; /* JS controls this */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .glass-card img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            filter: grayscale(20%);
+            transition: filter 0.3s;
+        }
+
+        .glass-card:hover img {
+            filter: grayscale(0%);
+        }
+
+        .glass-card h3 {
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .glass-card p {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        /* 4. THE LETTER */
+        .letter-container {
+            max-width: 800px;
+            background: rgba(0,0,0,0.4);
+            border: 1px solid var(--accent-tertiary);
+            padding: 3rem;
+            position: relative;
+            border-radius: 2px;
+            margin: 0 auto;
+        }
+
+        .letter-container::before {
+            content: '';
+            position: absolute;
+            top: -2px; left: -2px; right: -2px; bottom: -2px;
+            background: linear-gradient(45deg, var(--accent-primary), var(--accent-secondary), var(--accent-tertiary));
+            z-index: -1;
+            filter: blur(20px);
+            opacity: 0.5;
+        }
+
+        .letter-text {
+            font-family: var(--font-serif);
+            font-size: 1.4rem;
+            line-height: 1.8;
+        }
+
+        /* 5. INTERACTIVE CAKE */
+        .cake-container {
+            position: relative;
+            margin-top: 2rem;
+            cursor: pointer;
+        }
+
+        .flame {
+            width: 20px;
+            height: 30px;
+            background: linear-gradient(to bottom, #ffeb3b, #ff9800);
+            border-radius: 50% 50% 20% 20%;
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 0 10px #ff9800, 0 0 20px #ffeb3b;
+            animation: flicker 0.1s infinite alternate;
+            transition: opacity 0.5s;
+        }
+
+        .flame.out {
+            opacity: 0;
+        }
+
+        .candle {
+            width: 15px;
+            height: 80px;
+            background: linear-gradient(to right, #e0e0e0, #fff);
+            border-radius: 4px;
+            margin: 0 auto;
+        }
+
+        .cake-base {
+            width: 150px;
+            height: 60px;
+            background: var(--accent-primary);
+            border-radius: 10px 10px 5px 5px;
+            margin-top: -5px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 30px rgba(255, 42, 109, 0.4);
+        }
+        
+        .cake-text {
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* 6. AUDIO CONTROL */
+        #audio-control {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            font-size: 1.5rem;
+        }
+
+        /* ANIMATION KEYFRAMES */
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-10px);}
+            60% {transform: translateY(-5px);}
+        }
+
+        @keyframes flicker {
+            from { transform: translateX(-50%) scale(1); opacity: 1; }
+            to { transform: translateX(-50%) scale(1.1); opacity: 0.8; }
+        }
+
+        /* MEDIA QUERIES */
+        @media(max-width: 768px) {
+            h1.hero-title { font-size: 4rem; }
+            .letter-container { padding: 1.5rem; width: 90%; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- BACKGROUND ENGINE -->
+    <canvas id="cosmos"></canvas>
+
+    <!-- AUDIO (Autoplay blocked by browsers, started via JS) -->
+    <!-- Placeholder ambient music -->
+    <audio id="bg-music" loop>
+        <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112762.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="audio-control">🎵</div>
+
+    <!-- SCENE 1: ENTRANCE -->
+    <div id="entry-screen">
+        <h2 style="margin-bottom: 20px; font-weight: 300; letter-spacing: 2px;">INCOMING MESSAGE</h2>
+        <button class="entry-btn" id="start-btn">Open</button>
+    </div>
+
+    <!-- SCENE 2: HERO -->
+    <section id="home">
+        <h1 class="hero-title">HAPPY<br><span class="gradient-text">BIRTHDAY</span></h1>
+        <p class="subtitle fade-in-up">To my favorite human in the universe</p>
+        
+        <div class="scroll-indicator">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                <path d="M7 13l5 5 5-5M7 6l5 5 5-5"/>
+            </svg>
+        </div>
+    </section>
+
+    <!-- SCENE 3: MEMORY LANE -->
+    <section id="memories">
+        <h2 class="fade-in-up" style="margin-bottom: 3rem; font-size: 2.5rem;">The <span class="gradient-text">Highlights</span></h2>
+        
+        <div class="card-container">
+            <!-- Card 1 -->
+            <div class="glass-card fade-in-up">
+                <!-- Replace src with real photos -->
+                <img src="https://images.unsplash.com/photo-1511988617509-a57c8a288659?q=80&w=1000&auto=format&fit=crop" alt="Memory 1">
+                <h3>The Adventures</h3>
+                <p>From late night drives to quiet moments, every second is a scene from a movie I never want to end.</p>
+            </div>
+            
+            <!-- Card 2 -->
+            <div class="glass-card fade-in-up" style="transition-delay: 0.2s;">
+                <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=1000&auto=format&fit=crop" alt="Memory 2">
+                <h3>The Laughter</h3>
+                <p>Your smile is my favorite source of light. Thank you for making life so much brighter.</p>
+            </div>
+            
+            <!-- Card 3 -->
+            <div class="glass-card fade-in-up" style="transition-delay: 0.4s;">
+                <img src="https://images.unsplash.com/photo-1516054575922-f0b8eeadec1a?q=80&w=1000&auto=format&fit=crop" alt="Memory 3">
+                <h3>The Future</h3>
+                <p>Here's to another lap around the sun, and to all the milestones we haven't reached yet.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SCENE 4: THE LETTER -->
+    <section id="message">
+        <div class="letter-container tilt-card fade-in-up">
+            <h2 style="font-family: var(--font-main); text-transform: uppercase; margin-bottom: 1rem; color: var(--accent-secondary);">A Note for You</h2>
+            <div class="letter-text">
+                <p>
+                    Hey You,<br><br>
+                    In a world that changes so fast, you are my constant. Today isn't just about you getting older; it's about the world getting luckier for having you in it for another year.
+                    <br><br>
+                    I hope this year brings you as much joy as you bring to everyone around you. Keep shining, keep dreaming, and keep being the amazing soul that you are.
+                    <br><br>
+                    With all my love,<br>
+                    <span style="color: var(--accent-primary);">[Your Name]</span>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SCENE 5: INTERACTIVE CAKE -->
+    <section id="celebrate">
+        <h2 class="fade-in-up" style="font-size: 2rem; margin-bottom: 2rem;">Make a <span class="gradient-text">Wish</span></h2>
+        <p style="color: var(--text-muted); margin-bottom: 2rem;">(Tap the flame to blow it out)</p>
+        
+        <div class="cake-container fade-in-up" id="wish-btn">
+            <div class="flame" id="flame"></div>
+            <div class="candle"></div>
+            <div class="cake-base">
+                <span class="cake-text">Happy B-Day</span>
+            </div>
+        </div>
+
+        <h2 id="wish-message" class="hidden" style="margin-top: 3rem; color: var(--accent-secondary);">WISH GRANTED ✨</h2>
+    </section>
+
+    <script>
+        /**
+         * LOGIC CONTROLLER
+         */
+
+        // --- 1. CANVAS BACKGROUND (Starfield) ---
+        const canvas = document.getElementById('cosmos');
+        const ctx = canvas.getContext('2d');
+        
+        let width, height;
+        let particles = [];
+        
+        // Resize handling
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+            
+            reset() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.size = Math.random() * 2;
+                this.speedX = (Math.random() - 0.5) * 0.5;
+                this.speedY = (Math.random() - 0.5) * 0.5;
+                this.life = Math.random(); 
+                this.color = Math.random() > 0.5 ? '#ff2a6d' : '#05d9e8';
+            }
+            
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.life += 0.01;
+                
+                // Wrap around screen
+                if (this.x > width) this.x = 0;
+                if (this.x < 0) this.x = width;
+                if (this.y > height) this.y = 0;
+                if (this.y < 0) this.y = height;
+                
+                // Pulse effect
+                this.currentSize = this.size + Math.sin(this.life) * 1;
+            }
+            
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, Math.max(0, this.currentSize), 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.globalAlpha = Math.abs(Math.sin(this.life)) * 0.5;
+                ctx.fill();
+                ctx.globalAlpha = 1;
+            }
+        }
+
+        // Initialize particles
+        for (let i = 0; i < 100; i++) {
+            particles.push(new Particle());
+        }
+
+        function animateCanvas() {
+            ctx.clearRect(0, 0, width, height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animateCanvas);
+        }
+        animateCanvas();
+
+
+        // --- 2. APP FLOW ---
+        const startBtn = document.getElementById('start-btn');
+        const entryScreen = document.getElementById('entry-screen');
+        const audio = document.getElementById('bg-music');
+        const audioControl = document.getElementById('audio-control');
+
+        // Start Journey
+        startBtn.addEventListener('click', () => {
+            entryScreen.style.opacity = '0';
+            setTimeout(() => {
+                entryScreen.style.display = 'none';
+                audio.volume = 0.3;
+                // Attempt to play audio
+                var playPromise = audio.play();
+                if (playPromise !== undefined) {
+                    playPromise.then(_ => {}).catch(error => { console.log("Audio play failed"); });
+                }
+            }, 1000);
+        });
+
+        // Audio Toggle
+        let isPlaying = true;
+        audioControl.addEventListener('click', () => {
+            if(isPlaying) {
+                audio.pause();
+                audioControl.innerHTML = '🔇';
+            } else {
+                audio.play();
+                audioControl.innerHTML = '🎵';
+            }
+            isPlaying = !isPlaying;
+        });
+
+
+        // --- 3. SCROLL REVEAL ANIMATIONS ---
+        const observerOptions = { threshold: 0.1 };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in-up').forEach(el => observer.observe(el));
+
+
+        // --- 4. INTERACTIVE CAKE & CONFETTI ---
+        const wishBtn = document.getElementById('wish-btn');
+        const flame = document.getElementById('flame');
+        const wishMessage = document.getElementById('wish-message');
+
+        wishBtn.addEventListener('click', () => {
+            if(!flame.classList.contains('out')) {
+                flame.classList.add('out');
+                triggerConfetti();
+                setTimeout(() => {
+                    wishMessage.classList.remove('hidden');
+                    wishMessage.classList.add('fade-in-up', 'visible');
+                }, 500);
+            }
+        });
+
+        function triggerConfetti() {
+            const colors = ['#ff2a6d', '#05d9e8', '#7700ff', '#ffffff'];
+            let confettiParticles = [];
+            
+            for(let i=0; i<150; i++) {
+                confettiParticles.push({
+                    x: window.innerWidth / 2,
+                    y: window.innerHeight / 2 + window.scrollY, 
+                    vx: (Math.random() - 0.5) * 20,
+                    vy: (Math.random() - 0.5) * 20 - 10,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    size: Math.random() * 8 + 2,
+                    life: 100
+                });
+            }
+
+            // Overlay canvas for confetti
+            const cCanvas = document.createElement('canvas');
+            cCanvas.style.position = 'fixed'; 
+            cCanvas.style.top = '0';
+            cCanvas.style.left = '0';
+            cCanvas.style.width = '100%';
+            cCanvas.style.height = '100%';
+            cCanvas.style.pointerEvents = 'none';
+            cCanvas.style.zIndex = '9999';
+            document.body.appendChild(cCanvas);
+            
+            const cCtx = cCanvas.getContext('2d');
+            cCanvas.width = window.innerWidth;
+            cCanvas.height = window.innerHeight;
+
+            function animateConfetti() {
+                cCtx.clearRect(0, 0, cCanvas.width, cCanvas.height);
+                
+                let active = false;
+                confettiParticles.forEach(p => {
+                    if(p.life > 0) {
+                        active = true;
+                        p.x += p.vx;
+                        p.y += p.vy;
+                        p.vy += 0.5; // Gravity
+                        p.life--;
+                        
+                        cCtx.fillStyle = p.color;
+                        cCtx.fillRect(p.x, p.y - window.scrollY, p.size, p.size); 
+                    }
+                });
+
+                if(active) {
+                    requestAnimationFrame(animateConfetti);
+                } else {
+                    cCanvas.remove();
+                }
+            }
+            animateConfetti();
+        }
+    </script>
+</body>
+</html>
